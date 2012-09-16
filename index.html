@@ -9,20 +9,45 @@
 
     <!-- Le styles -->
     <link href="qunit.css" rel="stylesheet">
-    
+
     <style>
 
       h1{ text-align: center; }
 
     </style>
     <script src="scripts/jquery.js" type="text/javascript"></script>
-    <script src='scripts/ticker.js' type='text/javascript'></script> 
+    <script src="scripts/jquery.cookie.js" type="text/javascript"></script>
+    <script src='scripts/ticker.js' type='text/javascript'></script>
     <script src="scripts/qunit.js" type="text/javascript"></script>
     <script>
-        test("prettydate basics", function() {
-          var now = "2008/01/28 22:25:00";
-          equal("just now", "just now");
+        test("Ticker.clips_count after init", function() {
+          Ticker.init();
+          equal(Ticker.clips_count(), 0);
+
         });
+
+        test("Ticker.clips_count with 1 clip", function(){
+          Ticker.init();
+          Ticker.add_clipping('want_to_go', 'some_key')
+          equal(Ticker.clips_count(), 1);
+          equal(Ticker.clips_count('want_to_go'), 1);
+          equal(Ticker.clips_count('been_there'), 0);
+        });
+
+        test("Ticker.clips_count with 2 clips", function(){
+          Ticker.init();
+          Ticker.add_clipping('want_to_go', 'some_key');
+          Ticker.add_clipping('been_there', 'some_key');
+          equal(Ticker.clips_count(), 2);
+          equal(Ticker.clips_count('want_to_go'), 1);
+          equal(Ticker.clips_count('been_there'), 1);
+        });
+
+        test("Ticker.clips_count uknown name returns 0", function(){
+          Ticker.init();
+          Ticker.add_clipping('want_to_go', 'some_key');
+          equal(Ticker.clips_count('pants'), 0);
+        })
     </script>
   </head>
 

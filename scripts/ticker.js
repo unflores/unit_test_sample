@@ -60,11 +60,6 @@ Ticker = (function() {
       // Wrap each number in spans for prettier styling
       output = (zeros + count).replace(/(\w)/g, "<span>$&</span>");
 
-      // Add transfer effect
-      if( key ){
-        $('#' + key).effect( 'transfer', options, 500);
-      }
-
       $(ticker_handle).html(output);
     },
     // Getter for trips variable
