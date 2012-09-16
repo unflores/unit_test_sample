@@ -46,6 +46,7 @@ Ticker = (function() {
       counts[trip_name]++;
       $.cookie('trips', JSON.stringify(trips), { path: '/' });
       _m.update_ticker_display(trip_name, key);
+      return true;
     },
     // Takes the count of a trip and formats it for the view
     update_ticker_display: function(trip_name, key){

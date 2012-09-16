@@ -20,6 +20,18 @@
     <script src='scripts/ticker.js' type='text/javascript'></script>
     <script src="scripts/qunit.js" type="text/javascript"></script>
     <script>
+
+        test("Ticker.add_clipping returns false if no key passed in", function(){
+          Ticker.init();
+          equal(Ticker.add_clipping('pants'), false);
+        });
+
+        test("Ticker.add_clipping returns false if key already added", function(){
+          Ticker.init();
+          equal(Ticker.add_clipping('want_to_go', 'thing'), true);
+          equal(Ticker.add_clipping('want_to_go', 'thing'), false);
+        });
+
         test("Ticker.clips_count after init", function() {
           Ticker.init();
           equal(Ticker.clips_count(), 0);
@@ -47,7 +59,8 @@
           Ticker.init();
           Ticker.add_clipping('want_to_go', 'some_key');
           equal(Ticker.clips_count('pants'), 0);
-        })
+        });
+
     </script>
   </head>
 
