@@ -19,6 +19,21 @@ Ticker = (function() {
         if(json.hasOwnProperty(prop)){ count++; }
       }
       return count;
+    },
+    // Takes the count of a trip and formats it for the view
+    update_ticker_display: function(trip_name, key){
+      var count           = _m.clips_count(trip_name),
+          remaining_zeros = zero_padding - String(count).length,
+          ticker_handle   = '#footer .' + trip_name + ' .count',
+          options         = { to: ticker_handle, className: 'ui-effects-transfer' },
+          zeros           = '',
+          output          = '';
+      // Find how many zeros to pad with
+      for(i = 0; i < remaining_zeros; i ++){ zeros += '0'; }
+      // Wrap each number in spans for prettier styling
+      output = (zeros + count).replace(/(\w)/g, "<span>$&</span>");
+
+      $(ticker_handle).html(output);
     }
   };
 
@@ -27,7 +42,7 @@ Ticker = (function() {
     add_clipping_event: function(e, data_class){
 
       var $target = $(e.target),
-          trip    = $target.hasClass('x_discovery_want_to_go') ? 'want_to_go' : 'been_there',
+          trip    = $target.hasClass('x_want_to_go') ? 'want_to_go' : 'been_there',
           id      = $target.parents(data_class).attr('id');
 
       _m.add_clipping(trip, id);
@@ -45,23 +60,8 @@ Ticker = (function() {
       trips[trip_name][key] = true;
       counts[trip_name]++;
       $.cookie('trips', JSON.stringify(trips), { path: '/' });
-      _m.update_ticker_display(trip_name, key);
+      _p.update_ticker_display(trip_name, key);
       return true;
-    },
-    // Takes the count of a trip and formats it for the view
-    update_ticker_display: function(trip_name, key){
-      var count           = _m.clips_count(trip_name),
-          remaining_zeros = zero_padding - String(count).length,
-          ticker_handle   = '#footer .' + trip_name + ' .count',
-          options         = { to: ticker_handle, className: 'ui-effects-transfer' },
-          zeros           = '',
-          output          = '';
-      // Find how many zeros to pad with
-      for(i = 0; i < remaining_zeros; i ++){ zeros += '0'; }
-      // Wrap each number in spans for prettier styling
-      output = (zeros + count).replace(/(\w)/g, "<span>$&</span>");
-
-      $(ticker_handle).html(output);
     },
     // Getter for trips variable
     trips: function(){ return trips; },
@@ -72,8 +72,8 @@ Ticker = (function() {
       // Get total count
       return counts['want_to_go'] + counts['been_there'];
     },
-    // Initialze the trips variable and the handlers for click events
-    init: function() {
+    // Initialize the trips variable and the handlers for click events
+    init: function(options, callback) {
       // Remove this when we are handling logged in users too
       if(window.user !== undefined){ return false; }
 
@@ -87,9 +87,12 @@ Ticker = (function() {
       counts['want_to_go'] = _p.json_count(trips.want_to_go);
       counts['been_there'] = _p.json_count(trips.been_there);
 
-      _m.update_ticker_display('want_to_go');
-      _m.update_ticker_display('been_there');
+      _p.update_ticker_display('want_to_go');
+      _p.update_ticker_display('been_there');
 
+      if(typeof callback !== 'undefined'){
+        callback(_h);
+      }
 /*
       // Visitor clipping events for search results
       $('#clippings')
